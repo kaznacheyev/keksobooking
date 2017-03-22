@@ -1,7 +1,6 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Yaroslav Kaznacheyev](https://up.htmlacademy.ru/javascript/9/user/121510).
-* Наставник: `Неизвестно`.
 
 ---
 
