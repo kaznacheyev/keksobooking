@@ -4,7 +4,6 @@ var ads = [];
 var numberOfAds = 8;
 var tokyoMap = document.body.querySelector('.tokyo__pin-map');
 var lodgeTemplate = document.body.querySelector('#lodge-template').content;
-var dialogPanel = document.querySelector('.dialog__panel');
 
 var AVATAR = ['01', '02', '03', '04', '05', '06', '07', '08'];
 var LODGE_TITLES = [
@@ -31,6 +30,8 @@ var MAX_LOCATION_X = 900;
 var MIN_LOCATION_X = 300;
 var MAX_LOCATION_Y = 500;
 var MIN_LOCATION_Y = 100;
+var ESC_KEY_CODE = 27;
+var ENTER_KEY_CODE = 13;
 
 var getRandomElementFromArray = function (array) {
   return array[Math.floor(Math.random() * array.length)];
@@ -107,7 +108,7 @@ var createLabel = function (array) {
   labelImg.setAttribute('src', array.author.avatar);
   labelImg.setAttribute('width', imgWidth);
   labelImg.setAttribute('height', imgHeight);
-
+  labelImg.setAttribute('tabindex', '0');
   label.appendChild(labelImg);
   return label;
 };
@@ -156,6 +157,7 @@ var renderLodgeTemplate = function (array) {
 };
 
 var generateLodgeTemplate = function (advert) {
+  var dialogPanel = document.querySelector('.dialog__panel');
   var fragment = document.createDocumentFragment();
   fragment.appendChild(renderLodgeTemplate(advert));
   dialogPanel.parentNode.replaceChild(fragment, dialogPanel);
@@ -164,4 +166,74 @@ var generateLodgeTemplate = function (advert) {
   avatar.setAttribute('src', advert.author.avatar);
 };
 
-generateLodgeTemplate(ads[0]);
+var pins = document.querySelectorAll('.pin');
+var dialog = document.querySelector('.dialog');
+var dialogClose = dialog.querySelector('.dialog__close');
+
+var onEscPress = function (evt) {
+  if (evt.keyCode === ESC_KEY_CODE) {
+    closePopupDialog(dialog);
+  }
+};
+
+var closePopupDialog = function (block) {
+  block.style.display = 'none';
+  document.removeEventListener('keydown', onEscPress);
+};
+
+closePopupDialog(dialog);
+
+var onEnterPress = function (evt) {
+  return evt.keyCode === ENTER_KEY_CODE;
+};
+
+var deleteClass = function (array, className) {
+  for (var i = 0; i < array.length; i++) {
+    if (array[i].classList.contains(className)) {
+      array[i].classList.remove(className);
+    }
+  }
+};
+
+var openPopupDialog = function (evt) {
+  var clickedPinAvatar = evt.target;
+  var clickedPinWrap = clickedPinAvatar.parentNode;
+
+  if (clickedPinAvatar && !(clickedPinWrap.classList.contains('pin__main'))) {
+    var imageSrc = clickedPinAvatar.getAttribute('src');
+
+    for (var i = 0; i < ads.length; i++) {
+      if (ads[i].author.avatar === imageSrc) {
+        var index = i;
+      }
+    }
+    generateLodgeTemplate(ads[index]);
+
+    document.addEventListener('keydown', onEscPress);
+    deleteClass(pins, 'pin--active');
+    clickedPinWrap.classList.add('pin--active');
+    dialog.style.display = 'block';
+  }
+};
+
+tokyoMap.addEventListener('click', function (evt) {
+  openPopupDialog(evt);
+});
+
+tokyoMap.addEventListener('keydown', function (evt) {
+  if (onEnterPress(evt)) {
+    openPopupDialog(evt);
+  }
+});
+
+dialogClose.addEventListener('click', function () {
+  closePopupDialog(dialog);
+  deleteClass(pins, 'pin--active');
+});
+
+dialogClose.addEventListener('keydown', function (evt) {
+  if (onEnterPress(evt)) {
+    closePopupDialog(dialog);
+    deleteClass(pins, 'pin--active');
+  }
+});
