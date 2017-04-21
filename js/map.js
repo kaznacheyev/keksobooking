@@ -199,7 +199,7 @@ var openPopupDialog = function (evt) {
   var clickedPinAvatar = evt.target;
   var clickedPinWrap = clickedPinAvatar.parentNode;
 
-  if (clickedPinAvatar && !(clickedPinWrap.classList.contains('pin__main'))) {
+  if (clickedPinAvatar.classList.contains('rounded') && !(clickedPinWrap.classList.contains('pin__main'))) {
     var imageSrc = clickedPinAvatar.getAttribute('src');
 
     for (var i = 0; i < ads.length; i++) {
