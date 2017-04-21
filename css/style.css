@@ -655,3 +655,7 @@ select option:hover {
 .rounded {
     border-radius: 50%;
 }
+
+.error {
+    outline: 2px solid #ff0000 !important;
+}
